@@ -23,6 +23,10 @@ export class NavMenu extends Component {
 
   render() {
     return (
+      <div>
+
+      </div>
+      /*
       <header>
         <Navbar className="navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3" container light>
           <NavbarBrand tag={Link} to="/">NoCO2</NavbarBrand>
@@ -42,6 +46,7 @@ export class NavMenu extends Component {
           </Collapse>
         </Navbar>
       </header>
+      */
     );
   }
 }
