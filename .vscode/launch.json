@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/NoCO2/bin/Debug/net7.0/NoCO2.dll",
+            "program": "${workspaceFolder}/NoCO2/bin/Debug/net6.0/NoCO2.dll",
             "args": [],
             "cwd": "${workspaceFolder}/NoCO2",
             "stopAtEntry": false,
