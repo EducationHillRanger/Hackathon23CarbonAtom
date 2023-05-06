@@ -1,8 +1,23 @@
+console.log('Tailwind config loaded!');
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [],
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'cabbagePoint': '#45523e',
+        'cloudy': '#b0aca2',
+        'merino': '#f5ece5',
+      },
+      backgroundColor: {
+        'cabbagePoint': '#45523e',
+        'cloudy': '#b0aca2',
+        'merino': '#f5ece5',
+      }
+    },
   },
   plugins: [],
 }
