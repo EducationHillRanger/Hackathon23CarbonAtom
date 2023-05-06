@@ -12,12 +12,14 @@ module.exports = {
         'cloudy': '#b0aca2',
         'merino': '#f5ece5',
         'limeGreen': '#528265',
+        'matrix': '#ad5d50',
       },
       backgroundColor: {
         'cabbagePoint': '#45523e',
         'cloudy': '#b0aca2',
         'merino': '#f5ece5',
         'limeGreen': '#528265',
+        'matrix': '#ad5d50',
       }
     },
   },
