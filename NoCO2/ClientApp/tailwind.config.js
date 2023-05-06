@@ -11,11 +11,13 @@ module.exports = {
         'cabbagePoint': '#45523e',
         'cloudy': '#b0aca2',
         'merino': '#f5ece5',
+        'limeGreen': '#528265',
       },
       backgroundColor: {
         'cabbagePoint': '#45523e',
         'cloudy': '#b0aca2',
         'merino': '#f5ece5',
+        'limeGreen': '#528265',
       }
     },
   },
