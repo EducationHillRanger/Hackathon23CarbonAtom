@@ -1,15 +1,31 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginPannel() {
+  const auth = getAuth();
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: ""
   });
 
+  async function loginUser() {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, loginInput.email, loginInput.password);
+      const user = userCredential.user;
+      alert(user.uid);
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // Handle the error
+      alert(errorMessage);
+    }
+  }
+
   const onSubmitForm = e => {
     e.preventDefault();
     alert(JSON.stringify(loginInput, null, 2));
+    loginUser();
   }
 
   const onFormUpdate = e => {
@@ -30,7 +46,7 @@ function LoginPannel() {
             <label>
               <div class="text-2xl mb-1">Email</div>
               <input
-                class="border border-black h-20 w-full rounded-2xl text-3xl"
+                class="border border-black h-20 w-full rounded-2xl text-3xl pl-2"
                 name="email"
                 type='text'
                 value={loginInput.email}
@@ -40,7 +56,7 @@ function LoginPannel() {
             <label class="mt-4">
               <div class="text-2xl mb-1">Password</div>
               <input
-                class="border border-black h-20 w-full rounded-2xl text-3xl"
+                class="border border-black h-20 w-full rounded-2xl text-3xl pl-2"
                 name="password"
                 type='password'
                 value={loginInput.password}
