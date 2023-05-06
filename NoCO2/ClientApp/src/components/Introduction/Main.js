@@ -16,7 +16,7 @@ export class Main extends Component {
           <div class="z-10 text-8xl text-center text-cabbagePoint">
             Lets hit net zero CO2 in 2050
           </div>
-          <button class="z-10 w-5/12 mt-20 bg-limeGreen rounded-2xl text-merino h-20 text-6xl ml-4">Lets Get Started</button>
+          <button class="z-10 w-5/12 mt-16 bg-limeGreen rounded-2xl text-merino h-20 text-6xl ml-4">Lets Get Started</button>
         </div>
       </div>
     );
