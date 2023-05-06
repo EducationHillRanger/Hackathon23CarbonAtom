@@ -7,7 +7,7 @@ function Navbar() {
   console.log(location.pathname);
 
   return (
-    <header class="z-10 w-screen p-3 bg-cabbagePoint fixed">
+    <header class="z-20 w-screen p-3 bg-cabbagePoint fixed">
       <div class="flex md:flex-grow h-12">
         <div class="ml-auto">
           <Link to="/signup">

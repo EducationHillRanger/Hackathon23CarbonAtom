@@ -1,5 +1,6 @@
 import { Main } from "./components/Introduction/Main";
-import { SignUp } from "./components/AccountActionPage/SignUp";
+import { SignUp } from "./components/AccountActionPage/SignUp/SignUp";
+import { Login } from "./components/AccountActionPage/Login/Login";
 
 const AppRoutes = [
   {
@@ -10,6 +11,10 @@ const AppRoutes = [
     path: '/signup',
     element: <SignUp />
   },
+  {
+    path: '/login',
+    element: <Login />
+  }
 ];
 
 export default AppRoutes;
