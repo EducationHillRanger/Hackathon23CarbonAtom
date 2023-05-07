@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginPannel() {
   const auth = getAuth();
+  const navigate = useNavigate(); // add useNavigate hook
   const [loginInput, setLoginInput] = useState({
     email: "",
     password: ""
@@ -13,18 +14,19 @@ function LoginPannel() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, loginInput.email, loginInput.password);
       const user = userCredential.user;
-      alert(user.uid);
+      //alert(user.uid);
+      navigate("/dashboard", { state: { uid: user.uid } });
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       // Handle the error
-      alert(errorMessage);
+      //alert(errorMessage);
     }
   }
 
   const onSubmitForm = e => {
     e.preventDefault();
-    alert(JSON.stringify(loginInput, null, 2));
+    //alert(JSON.stringify(loginInput, null, 2));
     loginUser();
   }
 

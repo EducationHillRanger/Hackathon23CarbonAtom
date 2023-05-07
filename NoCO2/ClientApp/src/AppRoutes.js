@@ -1,6 +1,7 @@
 import { Main } from "./components/Introduction/Main";
 import { SignUp } from "./components/AccountActionPage/SignUp/SignUp";
 import { Login } from "./components/AccountActionPage/Login/Login";
+import { Dashboard } from "./components/Dashboard/Dashboard";
 
 const AppRoutes = [
   {
@@ -14,6 +15,10 @@ const AppRoutes = [
   {
     path: '/login',
     element: <Login />
+  },
+  {
+    path:'/dashboard',
+    element: <Dashboard />
   }
 ];
 

@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
 
 function SignUpPannel() {
   const auth = getAuth();
+  const navigate = useNavigate(); // add useNavigate hook
   const [signUpInput, setSignUpInput] = useState({
     email: "",
     password: ""
@@ -14,18 +15,19 @@ function SignUpPannel() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, signUpInput.email, signUpInput.password);
       const user = userCredential.user;
-      alert(user.uid);
+      navigate("/dashboard", { state: { uid: user.uid } });
+      //alert(user.uid);
     } catch (error) {
       const errorCode = error.code;
       const errorMessage = error.message;
       // Handle the error
-      alert(errorMessage);
+      //alert(errorMessage);
     }
   }
 
   const onSubmitForm = e => {
     e.preventDefault();
-    alert(JSON.stringify(signUpInput, null, 2));
+    //alert(JSON.stringify(signUpInput, null, 2));
     createUser();
   }
 
