@@ -36,6 +36,28 @@ public class MySQLDatabase
 
         connection = new MySqlConnection(connectionString);
     }
+
+    // front-end uses this method to sent in information for a new driving entry
+    public void DrivingCalculation(string key, string mpg, string distance) {
+        Functions calculator = new();
+        string emission = calculator.DrivingCalculation(mpg, distance);
+        SetOrAddCustomerTransportDaily(key, emission);
+    }
+
+    // front-end uses this method to sent in information for a new food entry
+    public void FoodCalculation(string key, string foodName, string amount) {
+        Functions calculator = new();
+        string emission = calculator.FoodCalculation(foodName, amount);
+        SetOrAddCustomerFoodDaily(key, emission);
+    }
+
+    // front-end uses this method to sent in information for a new clothes entry
+    public void ClothesCalculation(string key, string foodName, string amount) {
+        Functions calculator = new();
+        string emission = calculator.ClothesCalculation(foodName, amount);
+        SetOrAddCustomerClothesDaily(key, emission);
+    }
+
     // 
     public int CustomerCreation(string key)
     {
@@ -81,21 +103,21 @@ public class MySQLDatabase
     }
 
     // called when setting info to clothes daily, calls SetOrAdd method and specifies to what table this information should be added
-    public int SetOrAddCustomerClothesDaily(string key, string emissions)
+    private static int SetOrAddCustomerClothesDaily(string key, string emissions)
     {
         const string tableName = "CLOTHESDAILY";
         SetOrAddCustomerInputDaily(key, emissions, tableName);
         return 0;
     }
     // called when setting info to food daily, calls SetOrAdd method and specifies to what table this information should be added
-    public int SetOrAddCustomerFoodDaily(string key, string emissions)
+    private static int SetOrAddCustomerFoodDaily(string key, string emissions)
     {
         const string tableName = "FOODDAILY";
         SetOrAddCustomerInputDaily(key, emissions, tableName);
         return 0;
     }
     // called when setting info to transport daily, calls SetOrAdd method and specifies to what table this information should be added
-    public int SetOrAddCustomerTransportDaily(string key, string emissions)
+    private static int SetOrAddCustomerTransportDaily(string key, string emissions)
     {
         const string tableName = "TRANSPORTDAILY";
         SetOrAddCustomerInputDaily(key, emissions, tableName);
@@ -256,5 +278,24 @@ public class MySQLDatabase
         }
         connection.Close();
         return lastThreeEntries;
+    }
+
+    public List<KeyValuePair<string,string>> GetAllTotalEntries(string key) {
+        List<KeyValuePair<string,string>> allTotalEntries = new();
+        string date;
+        string emisions;
+        string query = "SELECT * FROM DAILYTOTALS WHERE CUSTOMERID = " + key + " ORDER BY DATE DESC LIMIT 3";
+
+        connection.Open();
+        using MySqlCommand command = new(query, connection);
+        using MySqlDataReader reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            date = reader.GetString("DATE");
+            emisions = reader.GetDecimal("EMISSIONS").ToString();
+            allTotalEntries.Add(new KeyValuePair<string, string>(date, emisions));
+        }
+        connection.Close();
+        return allTotalEntries;
     }
 }
