@@ -6,16 +6,16 @@ public class MySQLDatabase
     // class used to create object as return statments, for total infor
     public class CustomerInfo
     {
-        public string transprotTotal { get; set; }
-        public string foodTotal { get; set; }
-        public string clothesTotal { get; set; }
+        public string TransprotTotal { get; set; }
+        public string FoodTotal { get; set; }
+        public string ClothesTotal { get; set; }
     }
 
     // class used to create object as return statment for all specific emissions table
     public class SpecificTableInfo
     {
-        public string date { get; set; }
-        public string emission { get; set; }
+        public string Date { get; set; }
+        public string Emission { get; set; }
     }
 
     // private variables, information about MySQL Database on AWS RDS
@@ -65,16 +65,16 @@ public class MySQLDatabase
     {
         string query = "SELECT * FROM CUSTOMERIDANDTOTALS WHERE CUSTOMERID = " + key;
 
-        CustomerInfo customerInfo = new CustomerInfo();
+        CustomerInfo customerInfo = new();
         connection.Open();
 
-        using MySqlCommand command = new MySqlCommand(query, connection);
+        using MySqlCommand command = new(query, connection);
         using MySqlDataReader reader = command.ExecuteReader();
         while (reader.Read())
         {
-            customerInfo.transprotTotal = reader.GetDecimal("TRANSPORT").ToString();
-            customerInfo.clothesTotal = reader.GetDecimal("CLOTHES").ToString();
-            customerInfo.foodTotal = reader.GetDecimal("FOOD").ToString();
+            customerInfo.TransprotTotal = reader.GetDecimal("TRANSPORT").ToString();
+            customerInfo.ClothesTotal = reader.GetDecimal("CLOTHES").ToString();
+            customerInfo.FoodTotal = reader.GetDecimal("FOOD").ToString();
         }
         connection.Close();
         return customerInfo;
@@ -102,11 +102,11 @@ public class MySQLDatabase
         return 0;
     }
 
-    // this method will insert into the "input" table in the database and will either add or set the data to the table depending on return from IsInputFailyAlreadySet method
+    // this method will insert into the "input" table in the database and will either add or set the data to the table depending on return from TryToUpdateInputDaily method
     // private, only methods within this class can call, for security
     private static void SetOrAddCustomerInputDaily(string key, string emissions, string tableName)
     {
-        string date = (DateTime.UtcNow).ToString("MM/dd/yyyy");
+        string date = ((DateTime.UtcNow).AddDays(1)).ToString("MM/dd/yyyy");
         if (!TryToUpdateInputDaily(key, emissions, date, tableName)) {
             string query = "INSERT INTO " + tableName + " (CUSTOMERID, DATE, EMISSION) Values (@CUSTOMERID, @DATE, @EMISSION)";
             MySqlCommand command = connection.CreateCommand();
@@ -128,7 +128,7 @@ public class MySQLDatabase
         string query = "SELECT * FROM " + tableName + " WHERE CUSTOMERID = " + key + " AND DATE = '" + date + "'";
 
         connection.Open();
-        using MySqlCommand command = new MySqlCommand(query, connection);
+        using MySqlCommand command = new(query, connection);
         using MySqlDataReader reader = command.ExecuteReader();
         if (reader.HasRows) {
             double oldEmission = 0;
@@ -136,7 +136,7 @@ public class MySQLDatabase
                 oldEmission = (double)reader.GetDecimal("EMISSION");
             }
             reader.Close();
-            MySqlCommand updateCommand = new MySqlCommand("UPDATE " + tableName + " SET emission = @EMISSION WHERE CUSTOMERID = @CUSTOMERID AND DATE = @DATE", connection);
+            MySqlCommand updateCommand = new("UPDATE " + tableName + " SET emission = @EMISSION WHERE CUSTOMERID = @CUSTOMERID AND DATE = @DATE", connection);
             double newEmissions = oldEmission + double.Parse(emissions);
             string updatedEmission = newEmissions.ToString();
             updateCommand.Parameters.AddWithValue("@CUSTOMERID", key);
@@ -171,27 +171,30 @@ public class MySQLDatabase
     // doesnt return user key for security
     public SpecificTableInfo GetCustomerInputDaily(string key, string tableName)
     {
-        string date = (DateTime.UtcNow).ToString("MM/dd/yyyy");
+        string date = ((DateTime.UtcNow).AddDays(1)).ToString("MM/dd/yyyy");
         string query = "SELECT * FROM " + tableName + " WHERE CUSTOMERID = " + key + " AND DATE = '" + date + "'";
 
-        SpecificTableInfo transportInfo = new SpecificTableInfo();
+        SpecificTableInfo transportInfo = new();
         connection.Open();
 
-        using MySqlCommand command = new MySqlCommand(query, connection);
+        using MySqlCommand command = new(query, connection);
         using MySqlDataReader reader = command.ExecuteReader();
         while (reader.Read())
         {
-            transportInfo.date = reader.GetString("DATE");
-            transportInfo.emission = reader.GetDecimal("EMISSION").ToString();
+            transportInfo.Date = reader.GetString("DATE");
+            transportInfo.Emission = reader.GetDecimal("EMISSION").ToString();
         }
         connection.Close();
         return transportInfo;
     }
 
+    // this adds emissions from each category to the total for the day
+    // called within the methods that set emissions records for individual groups
+    // checks to see if there is already an entry in that day, and does the insert or not depending on response from TryToUpdateDailyTotals
     public static void SetOrADDDailyTotals(string key, string emissions, string date)
     {
         if (!TryToUpdateDailyTotals(key, emissions, date)) {
-            string query = "INSERT INTO DAILYTOTALS (CUSTOMERID, DATE, EMISSIONS) Values (@CUSTOMERID, @DATE, @EMISSIONS)";
+            const string query = "INSERT INTO DAILYTOTALS (CUSTOMERID, DATE, EMISSIONS) Values (@CUSTOMERID, @DATE, @EMISSIONS)";
             MySqlCommand command = connection.CreateCommand();
             command.CommandText = query;
             command.Parameters.AddWithValue("@CUSTOMERID", key);
@@ -201,10 +204,12 @@ public class MySQLDatabase
         }
     }
 
+    // this adds the new emissions log to the total emission log for that day, by adding the old and new emissions together
+    // checks if there are any rows that fit the criteria if not returns false, otherwise true and updates emissions
     public static bool TryToUpdateDailyTotals(string key, string emissions, string date)
     {
         string query = "SELECT * FROM DAILYTOTALS WHERE CUSTOMERID = " + key + " AND DATE = '" + date + "'";
-        using MySqlCommand command = new MySqlCommand(query, connection);
+        using MySqlCommand command = new(query, connection);
         using MySqlDataReader reader = command.ExecuteReader();
         if (reader.HasRows) {
             double oldEmission = 0;
@@ -212,7 +217,7 @@ public class MySQLDatabase
                 oldEmission = (double)reader.GetDecimal("EMISSIONS");
             }
             reader.Close();
-            MySqlCommand updateCommand = new MySqlCommand("UPDATE DAILYTOTALS SET emissions = @EMISSIONS WHERE CUSTOMERID = @CUSTOMERID AND DATE = @DATE", connection);
+            MySqlCommand updateCommand = new("UPDATE DAILYTOTALS SET emissions = @EMISSIONS WHERE CUSTOMERID = @CUSTOMERID AND DATE = @DATE", connection);
             double newEmissions = oldEmission + double.Parse(emissions);
             string updatedEmission = newEmissions.ToString();
             updateCommand.Parameters.AddWithValue("@CUSTOMERID", key);
@@ -222,5 +227,34 @@ public class MySQLDatabase
             return true;
         }
         return false;
+    }
+
+    // makes a list of key and value the alst three entries will be stored in this list
+    public List<KeyValuePair<string,string>> GetLastThreeEntries(string key) {
+        List<KeyValuePair<string,string>> lastThreeEntries = new();
+
+        string query = "SELECT * FROM DAILYTOTALS WHERE CUSTOMERID = " + key + " ORDER BY DATE DESC LIMIT 3";
+        connection.Open();
+
+        DateTime lastDate = DateTime.UtcNow;
+        string lastDateMonth = lastDate.ToString("MM");
+        string lastDateDay = lastDate.ToString("dd");
+        string lastDateYear = lastDate.ToString("yyyy");
+        string date;
+        string emisions;
+
+        using MySqlCommand command = new(query, connection);
+        using MySqlDataReader reader = command.ExecuteReader();
+        while (reader.Read())
+        {
+            date = reader.GetString("DATE");
+            emisions = reader.GetDecimal("EMISSIONS").ToString();
+            lastThreeEntries.Add(new KeyValuePair<string, string>(date, emisions));
+        }
+        while (lastThreeEntries.Count != 3) {
+            lastThreeEntries.Add(new KeyValuePair<string, string>("-1", "-1"));
+        }
+        connection.Close();
+        return lastThreeEntries;
     }
 }
