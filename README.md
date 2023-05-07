@@ -1,5 +1,20 @@
 # NoCO2
 
+## Prerequisite
+
+1. Install .NET 6.0 SDK
+2. Install Node.js
+
+## How to run
+
+1.  Clone the repository using ```git clone```
+2. Move into the NoCOS directory
+3. Transition into ClientApp directory and run ```npm install```
+4. Transition back to the NoCO2 directory
+5. run ```dotnet build```
+6. run ```dotnet run```
+7. use the link https://localhost:7194 to start
+
 ## Inspiration
 
 The project is inspired by Microsoft's article of "Xbox is the first console platform to release dedicated energy and carbon emissions measurement tools designed for (and with) game creators". Microsoft was able to release tools to help game developers to measure the CO2 emission for their game and help innovation to build more sustainable game.
